@@ -15,14 +15,35 @@ app.use(express.json())
 mongoose.connect("mongodb://127.0.0.1:27017/qt")
 
 app.post("/create", (req, res) => {
+    console.log(req.body);
     TaskModel.create(req.body)
     .then(task => res.json(task))
     .catch(err => res.json(err))
 })
 
+app.get('/getTask/:id', (req, res) => {
+    const id = req.params.id;
+    TaskModel.findById({_id:id})
+   
+    .then(tasks => res.json(tasks))
+    .catch(err => res.json(err))
+    console.log(req.body)
+})
+
+app.put('updateUser/:id', (req, res) => {
+    const id = req.params.id
+    TaskModel.findByIdAndUpdate({_id:id},{
+        title: req.body.title, 
+        start: req.body.start, 
+        end: req.body.end
+        })
+    .then(tasks => res.json(tasks))
+    .catch(err => res.json(err))
+})
+
 app.get('/', (req, res) => {
     TaskModel.find({})
-    .then(users => res.json(users))
+    .then(tasks => res.json(tasks))
     .catch(err => res.json(err))
 })
 
@@ -38,33 +59,27 @@ app.get('/projects', (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-    bcrypt.hash(req.body.password, 10)
-  .then((hashedPassword) => {
-    const user = new UserModel({
-        email: req.body.email,
-        password: hashedPassword
-    })
-  })
-  .catch((e) => {
-    res.status(500).send({
-      message: "Password was not hashed successfully",
-      e,
-    });
-  })
+    UserModel.create(req.body)
+    .then(users => res.json(users))
+    .catch(err => res.json(err))
+})
 
-  user.save().then((res) => {
-    res.status(201).send({
-      message: "User Created Successfully",
-      res,
-    });
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: "Error creating user",
-      err,
-    });
-  });
-});
+app.post('/login', (req, res) => {
+    const {email, password} = req.body
+    UserModel.findOne({ email: email})
+    .then(user => {
+        if(user) {
+            if(user.password === password){
+                res.json("success")
+            } else {
+                res.json("password is incorrect")
+            }
+        }else {
+            res.json("No user found")
+        }
+    })
+    .catch(err => res.json(err))
+})
 
 
 

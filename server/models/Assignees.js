@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const AssigneesSchema = new mongoose.Schema({
-   name: String
+   name: Object
 
 })
 

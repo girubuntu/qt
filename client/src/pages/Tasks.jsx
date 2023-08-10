@@ -1,27 +1,35 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link,useParams } from 'react-router-dom'
+
 
 
 function Tasks() {
 
     const [tasks, setTasks] = useState([])
+    
+    const {id} = useParams()
 
     useEffect(() => {
         axios.get('http://localhost:3001')
         .then(result => setTasks(result.data))
         .catch(err => console.log(err))
     }, [])
+ 
   return (
-    <div className='d-flex vh-100 bg-secondary justify-content-center align-items-center'>
-        <div className='w-50 bg-white rounded p-3'>
-            <Link to="/create" className='btn btn-primary'>Add Task</Link>
-            <table className='table'>
+    <div className='justify-content-center align-items-center'>
+        <h2 style={{textAlign: 'center', marginTop: '0.5rem'}}>List of Tasks</h2>
+        <div className='w-100 bg-white rounded p-3'>
+            <Link to="/create" className='btn btn-primary' style={{marginBottom: '0.8rem'}}>Add Task</Link>
+            <table className='table table-dark'>
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Start-date</th>
                         <th>End-date</th>
+                        <th>Assignee</th>
+                        <th>Project</th>
+                        <th>Priority</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -32,8 +40,11 @@ function Tasks() {
                                 <td>{task.title}</td>
                                 <td>{task.start}</td>
                                 <td>{task.end}</td>
+                                <td>{task.assignees}</td>
+                                <td>{task.project}</td>
+                                <td>{task.priority}</td>
                                 <td>
-                                    <Link className='btn btn-success'>view</Link>
+                                    
                                     <button className='btn btn-danger'>Delete</button>
                                 </td>
                             </tr>
